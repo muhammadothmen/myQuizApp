@@ -67,7 +67,7 @@
         >
 
         <androidx.appcompat.widget.AppCompatEditText
-            android:id="@+id/editTextName"
+            android:id="@+id/etName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Name"
@@ -75,6 +75,7 @@
             android:textColor="#363a43"
             android:textColorHint="#7a8089"
             />
+
     </com.google.android.material.textfield.TextInputLayout>
 
 <Button

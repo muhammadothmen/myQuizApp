@@ -11,20 +11,18 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        val editTextName : EditText = findViewById(R.id.editTextName)
+
+        val etName : EditText = findViewById(R.id.etName)
         val btnStart : Button = findViewById(R.id.btnStart)
         btnStart.setOnClickListener(){
-
-            if (editTextName.text.isEmpty()){
+            if (etName.text.isEmpty()){
                 Toast.makeText(this,"Please enter your name",Toast.LENGTH_SHORT).show()
             }else{
-                val intent = Intent(this,QuizQuestionActivity::class.java)
-                intent.putExtra(Constants.USER_NAME,editTextName.text.toString())
-                startActivity(intent)
+                val myIntent = Intent(this,QuizQuestionActivity::class.java)
+                myIntent.putExtra(Constants.USER_NAME,etName.text.toString())
+                startActivity(myIntent)
                 finish()
             }
-
         }
-
     }
 }

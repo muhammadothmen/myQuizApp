@@ -61,10 +61,10 @@
         android:id="@+id/btnFinish"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:background="@color/white"
+        android:layout_marginTop="16dp"
+        android:backgroundTint="@color/white"
         android:text="FINISH"
-        android:textColor="@color/white"
+        android:textColor="@color/design_default_color_primary"
         android:textSize="18sp"
         android:textStyle="bold"
         />

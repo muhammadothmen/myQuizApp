@@ -129,11 +129,11 @@ class QuizQuestionActivity : AppCompatActivity(), View.OnClickListener{
                         mCorrectAnswers++
                     }
                     answerView(question.correctAnswer, R.drawable.correct_option_border_bg)
-                    if (mCurrentPosition == mQuestionList!!.size){
+                 /*   if (mCurrentPosition == mQuestionList!!.size){
                         submitBtn?.text = "Finish"
                     }else{
                         submitBtn?.text = "Go to the next question"
-                    }
+                    }*/
                     mSelectedOptionPosition = 0
                 }
             }
