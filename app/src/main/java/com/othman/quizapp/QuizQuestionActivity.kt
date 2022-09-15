@@ -1,23 +1,25 @@
 package com.othman.quizapp
 
-import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.core.content.ContextCompat
 
+
 class QuizQuestionActivity : AppCompatActivity(), View.OnClickListener{
 
-    private var mQuestionList : ArrayList<Questions>? = null
+    private var randomQuestionList : List<Questions>? =null
+    private var randomOptions : List<String>? =null
     private var mCurrentPosition : Int = 1
     private var mCorrectAnswers : Int = 0
-
-    private var mSelectedOptionPosition : Int =0
+    private var selected : Boolean = false
+    private var mSelected : Boolean = false
+    private var mSelectedOptionPosition : Int = 0
+    private var mSelectedOption : String = ""
     private var mUserName : String? = null
     private var progressBar : ProgressBar? = null
     private var progressText : TextView? = null
@@ -28,6 +30,7 @@ class QuizQuestionActivity : AppCompatActivity(), View.OnClickListener{
     private var submitBtn : Button? = null
     private var questionText : TextView? = null
     private var image : ImageView? = null
+    
 
 
 
@@ -46,112 +49,108 @@ class QuizQuestionActivity : AppCompatActivity(), View.OnClickListener{
         image = findViewById(R.id.image)
         questionText = findViewById(R.id.question)
         submitBtn = findViewById(R.id.btnSubmit)
-
-        optionOne?.setOnClickListener(this)
-        optionTow?.setOnClickListener(this)
-        optionThree?.setOnClickListener(this)
-        optionFour?.setOnClickListener(this)
-        submitBtn?.setOnClickListener(this)
-        mQuestionList = Constants.getQuestions()
+        val options = arrayListOf(optionOne,optionTow,optionThree,optionFour,submitBtn)
+        for (option in options) {
+            option?.setOnClickListener(this)
+        }
+        randomQuestionList = Constants.getQuestions().shuffled()
         setQuestion()
     }
 
     private fun setQuestion() {
-
         defaultOptionView()
-        var question: Questions = mQuestionList!![mCurrentPosition - 1]
+        val question: Questions = randomQuestionList!![mCurrentPosition - 1]
         progressBar?.progress = mCurrentPosition
         progressText?.text = "$mCurrentPosition/${progressBar?.max}"
         questionText?.text = question.question
-        optionOne?.text = question.optionOne
-        optionTow?.text = question.optionTwo
-        optionThree?.text = question.optionThree
-        optionFour?.text = question.optionFour
+        randomOptions = listOf(question.optionOne,question.optionTwo,question.optionThree,question.optionFour).shuffled()
+        optionOne?.text = randomOptions!![0]
+        optionTow?.text = randomOptions!![1]
+        optionThree?.text = randomOptions!![2]
+        optionFour?.text = randomOptions!![3]
         image?.setImageResource(question.image)
-
-        if (mCurrentPosition == mQuestionList!!.size){
+        if (mCurrentPosition == randomQuestionList!!.size){
             submitBtn?.text = "Finish"
         }else{
-            submitBtn?.text = "Next"
+            submitBtn?.text = "Skip"
         }
-
     }
 
     private fun defaultOptionView(){
-
         val options = arrayListOf(optionOne,optionTow,optionThree,optionFour)
         for (option in options){
             option?.setTextColor(Color.parseColor("#7a8089"))
             option?.typeface = Typeface.DEFAULT
             option?.background = ContextCompat.getDrawable(this,R.drawable.default_option_border_bg)
-
         }
-
     }
 
-    private fun selectedOptionView(tv : TextView,selectedOptionNum : Int){
+    private fun selectedOptionView(tv : TextView,selected: Int){
         defaultOptionView()
-        mSelectedOptionPosition = selectedOptionNum
+        mSelectedOptionPosition = selected
+        mSelectedOption = tv.text.toString()
         tv.setTextColor(Color.parseColor("#363a43"))
         tv.setTypeface(tv.typeface,Typeface.BOLD)
         tv.background = ContextCompat.getDrawable(this,R.drawable.seleted_option_border_bg)
-
-
+        mSelected = true
+        submitBtn?.text = "Check"
     }
 
     override fun onClick(view: View?) {
         when(view?.id){
-            R.id.optionOne -> { optionOne?.let { selectedOptionView(it,1) } }
-            R.id.optionTwo -> { optionTow?.let { selectedOptionView(it,2) } }
-            R.id.optionThree -> { optionThree?.let { selectedOptionView(it,3) } }
-            R.id.optionFour -> { optionFour?.let { selectedOptionView(it,4) } }
+            R.id.optionOne -> { if (!selected) optionOne?.let { selectedOptionView(it,1) } }
+            R.id.optionTwo -> { if (!selected) optionTow?.let { selectedOptionView(it,2) } }
+            R.id.optionThree -> { if (!selected) optionThree?.let { selectedOptionView(it,3) } }
+            R.id.optionFour -> { if (!selected) optionFour?.let { selectedOptionView(it,4) } }
             R.id.btnSubmit -> {
-
-                if (mSelectedOptionPosition == 0){
+                if (!mSelected){
                     mCurrentPosition++
+                    selected = false
                     when {
-                        mCurrentPosition <= mQuestionList!!.size -> {setQuestion()}
+                        mCurrentPosition <= randomQuestionList!!.size -> {setQuestion()}
                         else ->{
                             val intent = Intent(this,TheResultActivity::class.java)
                             intent.putExtra(Constants.USER_NAME,mUserName)
                             intent.putExtra(Constants.CORRECT_ANSWERS,mCorrectAnswers)
-                            intent.putExtra(Constants.TOTAL_QUESTIONS,mQuestionList?.size)
+                            intent.putExtra(Constants.TOTAL_QUESTIONS,randomQuestionList?.size)
                             startActivity(intent)
                             finish()
-
                     }
                     }
                 }else {
-                    var question = mQuestionList?.get(mCurrentPosition - 1)
-                    if (question!!.correctAnswer != mSelectedOptionPosition) {
+                    val question = randomQuestionList!![mCurrentPosition - 1]
+                    if (question.correctAnswer != mSelectedOption) {
                         answerView(mSelectedOptionPosition, R.drawable.wrong_option_border_bg)
                     }else{
                         mCorrectAnswers++
                     }
-                    answerView(question.correctAnswer, R.drawable.correct_option_border_bg)
+                    when (question.correctAnswer) {
+                        optionOne?.text -> answerView(1, R.drawable.correct_option_border_bg)
+                        optionTow?.text -> answerView(2, R.drawable.correct_option_border_bg)
+                        optionThree?.text -> answerView(3, R.drawable.correct_option_border_bg)
+                        optionFour?.text -> answerView(4, R.drawable.correct_option_border_bg)
+                    }
+                    selected = true
+                    submitBtn?.text = "Next"
                  /*   if (mCurrentPosition == mQuestionList!!.size){
                         submitBtn?.text = "Finish"
                     }else{
                         submitBtn?.text = "Go to the next question"
                     }*/
-                    mSelectedOptionPosition = 0
+                    mSelected = false
+
                 }
             }
-
         }
     }
 
     private fun answerView (answer : Int , drawableView : Int){
-
         when(answer){
-
             1 -> {optionOne?.background = ContextCompat.getDrawable(this,drawableView)}
             2 -> {optionTow?.background = ContextCompat.getDrawable(this,drawableView)}
             3 -> {optionThree?.background = ContextCompat.getDrawable(this,drawableView)}
             4 -> {optionFour?.background = ContextCompat.getDrawable(this,drawableView)}
-
         }
-
     }
 
 }

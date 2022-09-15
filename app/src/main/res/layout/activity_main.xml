@@ -45,6 +45,7 @@
         android:textColor="#363a43"
         android:textStyle="bold"
 
+
         />
 
     <TextView
@@ -64,18 +65,18 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:hint="Name"
+
+
         >
 
         <androidx.appcompat.widget.AppCompatEditText
             android:id="@+id/etName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Name"
             android:inputType="textCapWords"
-            android:textColor="#363a43"
-            android:textColorHint="#7a8089"
+            android:textCursorDrawable="@drawable/cursor"
             />
-
     </com.google.android.material.textfield.TextInputLayout>
 
 <Button
@@ -83,10 +84,10 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginTop="16dp"
-    android:background="@color/design_default_color_primary"
     android:text="START"
     android:textColor="@color/white"
     android:textSize="18sp"
+    android:padding="10dp"
 
     >
 
